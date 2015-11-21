@@ -9,6 +9,7 @@ Types of Lattices:
 <ul>
 <li>Square
 <li>Chain
+<li>Honeycomb
 <li>To be added
 
 Members of Type
@@ -17,7 +18,7 @@ Members of Type
 <li>l , length in number of unit cells
 <li>dim, dimension of lattice
 <li>a, array containing the basis vectors by which positions are generated
-<li>unitA. array of positions inside a single unit
+<li>unit. array of positions inside a single unit
 <li> N , number of total sites
 <li> X, array of positions
 <li> nnei, number of nearest neighbors
