@@ -1,5 +1,5 @@
 module Lattices
-export Lattice, MakeLattice, PlotNeighbors
+export Lattice, MakeLattice, PlotNeighbors, MakeX
     using PyPlot
 
     type Lattice
@@ -21,13 +21,13 @@ export Lattice, MakeLattice, PlotNeighbors
 
     function MakeLattice(name::ASCIIString,l::Int)
         if(name=="Square")
-            return MakeSquare(l)
+            return MakeSquare(l);
         elseif(name=="Chain")
-            return MakeChain(l)
+            return MakeChain(l);
         elseif(name=="Honeycomb")
-            return MakeHoneycomb(l)
+            return MakeHoneycomb(l);
         elseif(name=="Triangular")
-            return MakeTriangular(l)
+            return MakeTriangular(l);
 
 
             #elseif(name=="Checkerboard")
@@ -42,7 +42,7 @@ export Lattice, MakeLattice, PlotNeighbors
 
     function MakeSquare(l::Int)
         N::UInt16=l^2;
-        d::UInt8=2;
+        d::Int8=2;
         X=Array{Int16}(N,2);
         nnei::UInt8=4;
         neigh=Array{Int16}(N,4);
@@ -58,12 +58,12 @@ export Lattice, MakeLattice, PlotNeighbors
         neigh[:,3]=X[:,1]+mod(X[:,2],l)*l;
         neigh[:,4]=X[:,1]+mod(X[:,2]+l-2,l)*l;
 
-        return Lattice("Square",l,d,a,unit,N,X,nnei,neigh)
+        return Lattice("Square",l,d,a,unit,N,X,nnei,neigh);
     end
 
     function MakeChain(l::Int)
         N::UInt16=l
-        d::Int8=1
+        d::UInt8=1
         nnei::UInt8=2
         neigh=Array{Int8}(N,2)
         a=[1];
@@ -74,7 +74,7 @@ export Lattice, MakeLattice, PlotNeighbors
         neigh[:,1]=armod(collect(2:(l+1)),l);
         neigh[:,2]=armod(collect(l:(2*l-1)),l);
 
-        return Lattice("Chain",l,d,a,unit,N,X,nnei,neigh)
+        return Lattice("Chain",l,d,a,unit,N,X,nnei,neigh);
     end
 
     function MakeTriangular(l::Int)
@@ -100,11 +100,11 @@ export Lattice, MakeLattice, PlotNeighbors
             neigh[ii,6]=armod(column+1,l)+l*mod(row-1,l);
         end
 
-        return Lattice("Triangular",l,d,a,unit,N,X,nnei,neigh)
+        return Lattice("Triangular",l,d,a,unit,N,X,nnei,neigh);
     end
 
     function MakeHoneycomb(l::Int)
-        d::UInt8=2;
+        d::Int8=2;
         nnei::UInt8=3;
         N::UInt16=2*l^2;
         a=[[2*cos(pi/6) 0]
@@ -137,14 +137,13 @@ export Lattice, MakeLattice, PlotNeighbors
             neigh[(2*l*(j-1)+1):(2*l*j),1:2]=neigh[1:(2*l),1:2]+2*l*(j-1);
         end
 
-        return Lattice("Honeycomb",l,d,a,unit,N,X,nnei,neigh)
+        return Lattice("Honeycomb",l,d,a,unit,N,X,nnei,neigh);
     end
 
-    function MakeX(a::Array,unit::Array,l::Int,d::Int)
+    function MakeX(a::Array,unit::Array,l::Int,d::Int8)
         ncell=size(unit)[1];
         N=ncell*l^d;
 
-        println(ncell,' ', typeof(ncell),' ',l, ' ',typeof(l))
         a1=repeat(a[1,:],outer=[ncell,1]);
         a2=repeat(a[2,:],outer=[ncell*l,1]);
         if d==3
@@ -181,7 +180,6 @@ export Lattice, MakeLattice, PlotNeighbors
                 for j in 1:lt.nnei
                     xx=[lt.X[i,1], lt.X[lt.neigh[i,j],1] ]
                     yx=[lt.X[i,2], lt.X[lt.neigh[i,j],2] ]
-                    println(xx,' ',yx)
                     plot(xx,yx)
                 end
             end
@@ -191,7 +189,6 @@ export Lattice, MakeLattice, PlotNeighbors
                     xx=[lt.X[i,1], lt.X[lt.neigh[i,j],1] ]
                     yx=[lt.X[i,2], lt.X[lt.neigh[i,j],2] ]
                     zx=[lt.X[i,3], lt.X[lt.neigh[i,j],3] ]
-                    println(xx,' ',yx)
                     plot3D(xx,yx)
                 end
             end
