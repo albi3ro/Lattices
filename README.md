@@ -5,14 +5,16 @@
 
 Useful for prototyping computational condensed matter physicists
 
-Types of Lattices:
+### Types of Lattices:
 <ul>
 <li>Square
+<li>Triangular
 <li>Chain
 <li>Honeycomb
+<li>Kagome
 <li>To be added
 
-Members of Type
+### Members of Type
 <ul>
 <li>name  , a string
 <li>l , length in number of unit cells
@@ -24,16 +26,19 @@ Members of Type
 <li> nnei, number of nearest neighbors
 <li> neigh, Array of nearest neighbors [i][j], where i is site and j is 1:nnei
 
-To Initialize a new lattice:
 
-  Call `lt=MakeLattice("Name",sizeoflattice)`
-  
-To plot the bonds
+### Calling
+| To:   | Do:  |
+|------------------------------|---------------------------------------------|
+| Use: | Put this file on your path, call `using Lattices`  |
+| Initialize a new lattice: | Call `lt=MakeLattice("Name",sizeoflattice)` |
+| Access a member: | ex. `lt.name` or  `lt.nnei` |
+| Make a position array: | `X=MakeX(a::Array,unit::Array,l::Int,d::Int8)` ) |
+| Plot the bonds | call `PlotNeighbors(lt)` |
 
-  call `PlotNeighbors(lt)`
-  
-To use:
-  
-  Put this file on your path
-  
-  Call `using Lattices`
+
+
+To put a file on your path:
+<ul>
+<li>each time execute the code `push!(LOAD_PATH,"/some/location")`
+<li>or add to to .juliarc.jl in your home directory the line `@everywhere push!(LOAD_PATH,"/some/location")`

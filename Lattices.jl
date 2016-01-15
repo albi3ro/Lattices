@@ -18,6 +18,10 @@ export Lattice, MakeLattice, PlotNeighbors, MakeX
         return mod(x-1+y,y)+1
     end
 
+    function parity(X)
+        return 1-2*mod(X,2)
+    end
+
 
     function MakeLattice(name::ASCIIString,l::Int)
         if(name=="Square")
@@ -28,11 +32,11 @@ export Lattice, MakeLattice, PlotNeighbors, MakeX
             return MakeHoneycomb(l);
         elseif(name=="Triangular")
             return MakeTriangular(l);
-
-
-            #elseif(name=="Checkerboard")
+        elseif(name=="Checkerboard")
+            return MakeCheckerboard(l);
             #elseif(name=="Pyrochlore")
-            #elseif(name=="Kagome")
+        elseif(name=="Kagome")
+            return MakeKagome(l);
         else
             println("I didnt give a good name, making a 2x2 square")
             return MakeSquare(2)
@@ -51,7 +55,7 @@ export Lattice, MakeLattice, PlotNeighbors, MakeX
         X[:,2]=ceil(collect(1:(N))/l);
         a=[[1 0]
             [0 1]];
-        unit=[0,0];
+        unit=[0 0];
 
         neigh[:,1]=armod(X[:,1]+1,l)+l*(X[:,2]-1);
         neigh[:,2]=armod(X[:,1]+l-1,l)+l*(X[:,2]-1);
@@ -59,6 +63,30 @@ export Lattice, MakeLattice, PlotNeighbors, MakeX
         neigh[:,4]=X[:,1]+mod(X[:,2]+l-2,l)*l;
 
         return Lattice("Square",l,d,a,unit,N,X,nnei,neigh);
+    end
+
+    function MakeCheckerboard(l::Int)
+      N::UInt16=l^2;
+      d::Int8=2;
+      X=Array{Int16}(N,2);
+      nnei::UInt8=6;
+      neigh=Array{Int16}(N,6);
+
+      X[:,1]=armod(collect(1:N),l);
+      X[:,2]=ceil(collect(1:(N))/l);
+      a=[[1 0]
+          [0 1]];
+      unit=[0 0];
+
+      neigh[:,1]=armod(X[:,1]+1,l)+l*(X[:,2]-1);
+      neigh[:,2]=armod(X[:,1]-1,l)+l*(X[:,2]-1);
+      neigh[:,3]=X[:,1]+mod(X[:,2],l)*l;
+      neigh[:,4]=X[:,1]+mod(X[:,2]+l-2,l)*l;
+
+      neigh[:,5]=armod(X[:,1]+1,l)+mod(X[:,2]+l-1+parity(X[:,1]).*parity(X[:,2]),l)*l;
+      neigh[:,6]=armod(X[:,1]-1,l)+mod(X[:,2]+l-1-parity(X[:,1]).*parity(X[:,2]),l)*l;
+
+      return Lattice("Checkerboard",l,d,a,unit,N,X,nnei,neigh);
     end
 
     function MakeChain(l::Int)
@@ -138,6 +166,34 @@ export Lattice, MakeLattice, PlotNeighbors, MakeX
         end
 
         return Lattice("Honeycomb",l,d,a,unit,N,X,nnei,neigh);
+    end
+
+    function MakeKagome(l::Int)
+      d::Int8=2;
+      nnei::UInt8=4;
+      N::UInt16=3*l^2;
+      a=[[2 0]
+         [1 sqrt(3)]];
+      unit=[[0 0]
+            [1 0]
+            [.5 .5*sqrt(3)]];
+
+      X=MakeX(a,unit,l,d);
+
+      ind=collect(1:N);
+      ti=armod(ind,3);
+      tri=Array{Int64}(N);
+      for ii in 1:N
+        tri[ii]=convert(Int64,floor((ind[ii]-1)/3))
+      end
+
+      neigh=Array{Int16}(N,4);
+      neigh[:,1]=mod(ti+1,3)+3*tri+1;
+      neigh[:,2]=mod(ti+2,3)+3*tri+1;
+      neigh[:,3]=armod(armod(ti+2,3)+(ti-2)*3*l+3*(mod(ti,3)-1)+tri*3,N);
+      neigh[:,4]=armod(armod(ti+1,3)+(1-mod(ti,3))*3*l+3-3*mod(ti+1,3)+tri*3,N);
+
+      return Lattice("Kagome",l,d,a,unit,N,X,nnei,neigh);
     end
 
     function MakeX(a::Array,unit::Array,l::Int,d::Int8)
