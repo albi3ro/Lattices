@@ -1,5 +1,6 @@
 module Lattices
-export Lattice, MakeLattice, PlotNeighbors, MakeX
+export Lattice, MakeLattice, PlotNeighbors, MakeX, MakeSquare, MakeCube, MakeChain, MakeHoneycomb,
+    MakeTriangular, MakeCheckerboard, MakeKagome
     using PyPlot
 
     type Lattice
@@ -63,6 +64,28 @@ export Lattice, MakeLattice, PlotNeighbors, MakeX
         neigh[:,4]=X[:,1]+mod(X[:,2]+l-2,l)*l;
 
         return Lattice("Square",l,d,a,unit,N,X,nnei,neigh);
+    end
+
+    function MakeCube(l::Int)
+        N::UInt16=l^3;
+        d::Int8=3;
+        nnei::UInt8=6;
+        neigh=Array{Int16}(N,6);
+
+        a=[[1 0 0 ]
+           [0 1 0]
+           [0 0 1]];
+        unit=[0 0 0];
+        X=MakeX(a,unit,l,d);
+
+        neigh[:,1]=armod(X[:,1]+2,l)+l*X[:,2]+X[:,3]*l^2;
+        neigh[:,2]=armod(X[:,1],l)+l*X[:,2]+X[:,3]*l^2;
+        neigh[:,3]=X[:,1]+1+l*mod(X[:,2]+2,l)+X[:,3]*l^2;
+        neigh[:,4]=X[:,1]+1+l*mod(X[:,2],l)+X[:,3]*l^2
+        neigh[:,5]=X[:,1]+1+l*X[:,2]+mod(X[:,3]+2,l)*l^2;
+        neigh[:,6]=X[:,1]+1+l*X[:,2]+mod(X[:,3],l)*l^2;
+
+        return Lattice("Cube",l,d,a,unit,N,X,nnei,neigh);
     end
 
     function MakeCheckerboard(l::Int)
@@ -194,6 +217,60 @@ export Lattice, MakeLattice, PlotNeighbors, MakeX
       neigh[:,4]=armod(armod(ti+1,3)+(1-mod(ti,3))*3*l+3-3*mod(ti+1,3)+tri*3,N);
 
       return Lattice("Kagome",l,d,a,unit,N,X,nnei,neigh);
+    end
+
+    function Bravis2D(l::Int,a1::Float64,a2::Float64,ϕ::Float64)
+          if (a1!=a2)
+              if (ϕ!=π/2)
+                  if ( isapprox(2*a1*cos(ϕ),a2) )
+                    name="rectangular"
+                  else
+                    name="oblique"
+                  end
+              else
+                name="rectangular"
+              end
+          elseif (isapprox(ϕ,2π/3))
+              name="hexagonal"
+          elseif (isapprox(ϕ,π/2))
+              name="square"
+          end
+
+
+          N::UInt16=l^2;
+          d::Int8=2;
+          nnei::UInt8=4;
+          neigh=Array{Int16}(N,4);
+
+          a=[[a1 0]
+              [a2*cos(ϕ) a2*sin(ϕ)]];
+          unit=[0 0];
+          X=MakeX(a,unit,l,d);
+
+          ind=collect(1:N);
+          y=floor(ind/l);
+          neigh[:,1]=armod(ind+1,l)+l*(X[:,2]-;
+          neigh[:,2]=armod(ind-1,l)+l*(X[:,2]-1);
+          neigh[:,3]=armod(ind,l)+mod(X[:,2],l)*l;
+          neigh[:,4]=armod(ind,l)+mod(X[:,2]+l-2,l)*l;
+
+          return Lattice("Square",l,d,a,unit,N,X,nnei,neigh);
+    end
+
+    function Bravais3D(l::Int,a1::Float64,a2::Float64,a3::Float64,α::Float64,β::Float64,γ::Float64)
+
+        N::UInt16=l^3;
+        d::Int8=3;
+        nnei=6;
+        neigh=Array{Int16}(N,6);
+
+        a=[[a1 0 0]
+           [a2*cos(α) 0 a2*sin(α)]
+           []]
+
+
+
+
     end
 
     function MakeX(a::Array,unit::Array,l::Int,d::Int8)
