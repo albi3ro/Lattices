@@ -78,7 +78,7 @@ export Lattice, MakeLattice, PlotNeighbors
     end
 
     function MakeTriangular(l::Int)
-        N::UInt16=l^2
+        N::Int64=l^2
         d=2
         nnei::UInt8=6
         neigh=Array{Int8}(N,6)
@@ -104,7 +104,7 @@ export Lattice, MakeLattice, PlotNeighbors
     end
 
     function MakeHoneycomb(l::Int)
-        d::UInt8=2;
+        d::Int64=2;
         nnei::UInt8=3;
         N::UInt16=2*l^2;
         a=[[2*cos(pi/6) 0]
@@ -137,7 +137,7 @@ export Lattice, MakeLattice, PlotNeighbors
             neigh[(2*l*(j-1)+1):(2*l*j),1:2]=neigh[1:(2*l),1:2]+2*l*(j-1);
         end
 
-        return Lattice("Honeycomb",l,d,a,unit,N,X,nnei,neigh)
+        return Lattice("Honeycomb",l,d,a,unit,N,X,nnei,neigh);
     end
 
     function MakeX(a::Array,unit::Array,l::Int,d::Int)
